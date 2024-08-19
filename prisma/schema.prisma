@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  email          String    @unique
+  password_hash  String
+  created_at     DateTime  @default(now())
+  bags           Bag[]     @relation("FoundBags")
+  reclaimRequests ReclaimRequest[] @relation("UserReclaimRequests")
+  lostBags       LostBag[] @relation("UserLostBags")
+}
+
+model Bag {
+  id             Int       @id @default(autoincrement())
+  color          String
+  type           String
+  contents       String?
+  id_proof       String?
+  image_url      String?
+  found_location String
+  found_by       Int
+  created_at     DateTime  @default(now())
+  foundBy        User      @relation(fields: [found_by], references: [id], name: "FoundBags")
+  reclaimRequests ReclaimRequest[] @relation("BagReclaimRequests")
+}
+
+model ReclaimRequest {
+  id                    Int       @id @default(autoincrement())
+  bag_id                Int
+  requested_by          Int
+  verified              Boolean   @default(false)
+  additional_info_request String?  
+  created_at            DateTime  @default(now())
+  bag                   Bag       @relation(fields: [bag_id], references: [id], name: "BagReclaimRequests")
+  requestedBy           User      @relation(fields: [requested_by], references: [id], name: "UserReclaimRequests")
+}
+model LostBag {
+  id              Int       @id @default(autoincrement())
+  color           String
+  type            String
+  contents        String?
+  last_seen_location String
+  date_time_lost  DateTime
+  contact_info    String
+  id_proof        String?
+  image_url       String?
+  reported_by     Int
+  created_at      DateTime  @default(now())
+  reportedBy      User      @relation(fields: [reported_by], references: [id], name: "UserLostBags")
+}
