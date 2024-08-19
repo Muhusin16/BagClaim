@@ -30,7 +30,6 @@ exports.uploadBag = async (req, res) => {
 };
 
 
-// Search Bags Endpoint
 exports.searchBags = async (req, res) => {
   const { color, type, found_location } = req.query;
   const bags = await prisma.bag.findMany({
