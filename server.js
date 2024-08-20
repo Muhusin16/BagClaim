@@ -4,16 +4,32 @@ const bagRoutes = require('./routes/bagRoutes');
 const lostBagRoutes = require('./routes/lostBagRoutes');
 const reclaimRoutes = require('./routes/reclaimRoutes');
 const { PrismaClient } = require("@prisma/client");
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
 
+app.use(cors({
+  origin: 'http://localhost:3000', 
+  credentials: true,
+}));
+
+// Serve static files from 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use('/api', authRoutes);
 app.use('/api', bagRoutes);
 app.use('/api', lostBagRoutes);
 app.use('/api', reclaimRoutes);
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
 
 const startServer = async () => {
   try {
@@ -26,7 +42,7 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error("Failed to connect to the database:", error);
-    process.exit(1); // Exit process with failure
+    process.exit(1); 
   }
 };
 
