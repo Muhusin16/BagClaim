@@ -1,8 +1,9 @@
 const express = require("express");
 const authRoutes = require('./routes/authRoutes');
-const bagRoutes = require('./routes/bagRoutes');
+const userRoutes = require('./routes/userRoutes');
 const lostBagRoutes = require('./routes/lostBagRoutes');
 const reclaimRoutes = require('./routes/reclaimRoutes');
+const adminRoutes = require('./routes/adminRoutes')
 const { PrismaClient } = require("@prisma/client");
 const fs = require('fs');
 const path = require('path');
@@ -22,9 +23,10 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', authRoutes);
-app.use('/api', bagRoutes);
+app.use('/api', userRoutes);
 app.use('/api', lostBagRoutes);
 app.use('/api', reclaimRoutes);
+app.use('/api/admin', adminRoutes);
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
