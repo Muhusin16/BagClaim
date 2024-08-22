@@ -19,16 +19,21 @@ model User {
 }
 
 model Bag {
-  id             Int       @id @default(autoincrement())
-  color          String
-  type           String
-  contents       String?
-  id_proof       String?
-  image_url      String?
-  found_location String
-  found_by       Int
-  created_at     DateTime  @default(now())
-  foundBy        User      @relation(fields: [found_by], references: [id], name: "FoundBags")
+  id              Int       @id @default(autoincrement())
+  primary_color   String
+  secondary_color String?
+  category        String
+  sub_category    String    
+  brand           String?
+  model           String?
+  serial_number   String?   
+  contents        String?
+  id_proof        String?
+  image_url       String?
+  found_location  String
+  found_by        Int
+  created_at      DateTime  @default(now())
+  foundBy         User      @relation(fields: [found_by], references: [id], name: "FoundBags")
   reclaimRequests ReclaimRequest[] @relation("BagReclaimRequests")
 }
 
@@ -39,20 +44,28 @@ model ReclaimRequest {
   verified              Boolean   @default(false)
   additional_info_request String?  
   created_at            DateTime  @default(now())
-  bag                   Bag       @relation(fields: [bag_id], references: [id], name: "BagReclaimRequests")
+  bag                   Bag       @relation(fields: [bag_id], references: [id], name: "BagReclaimRequests", onDelete: Cascade)
   requestedBy           User      @relation(fields: [requested_by], references: [id], name: "UserReclaimRequests")
 }
 model LostBag {
-  id              Int       @id @default(autoincrement())
-  color           String
-  type            String
-  contents        String?
+  id                Int       @id @default(autoincrement())
+  primary_color     String
+  secondary_color   String?
+  category          String
+  sub_category      String   
+  model             String?
+  serial_number     String?   
+  contents          String?
   last_seen_location String
-  date_time_lost  DateTime
-  contact_info    String
-  id_proof        String?
-  image_url       String?
-  reported_by     Int
-  created_at      DateTime  @default(now())
-  reportedBy      User      @relation(fields: [reported_by], references: [id], name: "UserLostBags")
+  date_time_lost    DateTime
+  contact_info      String
+  id_proof          String?
+  image_url         String?
+  address           String?   
+  state             String?   
+  city              String?   
+  zipcode           String?   
+  reported_by       Int
+  created_at        DateTime  @default(now())
+  reportedBy        User      @relation(fields: [reported_by], references: [id], name: "UserLostBags")
 }
